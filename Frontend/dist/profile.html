@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Your Profile</title>
+  <style>
+     h2{
+            color: black;
+            text-align: center;
+            font-size: 50px;
+            margin-left: 60px;
+        }
+   html, body { 
+    height: 100%;
+    font-family: Arial;
+    background: linear-gradient(to bottom right, #f8f8f8, #2e2e2e);
+    background-repeat: no-repeat;
+    background-size: cover;
+        }
+   form{
+     height: 700px;
+    max-width: 600px;
+    margin-left: 650px;
+ align-items: center;
+     text-align: center;
+     border: 2px solid black;
+     border-radius: 8px;
+     background-color: rgba(255, 255, 255, 0.85); 
+     backdrop-filter: blur(5px); 
+     box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+input{ width: 80%;
+    align-items: center;
+     padding: 16px; 
+     margin: 25px;
+     margin-bottom: 25px;
+     border:1px solid black;
+     border-radius: 4px;
+    font-size: 20px; }
+    .button { width: 80%;
+    align-items: center;
+     padding: 16px; 
+     margin: 25px;
+     margin-bottom: 25px;
+     border:1px solid black;
+     border-radius: 4px;
+    font-size: 20px; }
+ .button{
+color: white;
+background-color: lightslategray;
+border: none;
+cursor: pointer;
+     }
+     .button:hover{
+        background-color: whitesmoke;
+        color: black;
+     }
+    .message { text-align: center;
+         margin-bottom: 20px; 
+         font-weight: bold;
+         }
+    label { 
+        padding: 70px;
+        font-weight: bold;
+        font-size: 20px;
+       
+     }
+          .b{
+         display: flex;
+        gap: 20px;        
+         justify-content: center; 
+         margin: 20px 0;
+     }
+     .b button {
+     padding: 12px 10px;
+     font-size: 18px;
+     border: none;
+     border-radius: 6px;
+     cursor: pointer;
+     color: white;
+     transition: background-color 0.3s ease;
+  }
+  .b-history {
+    background-color: #007BFF; 
+  }
+  .b-history:hover {
+    background-color: #0056b3;
+  }
+  .b-profile {
+    background-color: #a72828;
+  }
+  .b-profile:hover {
+    background-color: #a12929;
+  }
+  </style>
+</head>
+<body>
+<h2>Edit Your Profile</h2>
+<div class="message" id="msg"></div>
+<form id="form">
+    <label for="name">Full Name</label>
+    <input type="text" id="name" name="name" required>
+    <label>Email</label>
+    <input type="email" id="email" disabled>
+    <label for="address">Address</label>
+    <input type="text" id="address" name="address">
+    <label for="contact">Contact Number</label>
+    <input type="text" id="contact" name="contact">
+  <button class="button" type="submit">Save</button>
+</form>
+<div class="b">
+  <button class="b-history" onclick="location.href='wallet.html'">Back to your wallet</button>
+ <button class="b-profile" onclick="location.href='/digital-wallet/Backend/logout.php'">Logout</button>
+
+</div>
+
+<script>
+    async function load(){
+        const res=await fetch("http://localhost/digital-wallet/Backend/api/profile.php");
+        const data=await res.json();
+        if(data.success){
+            document.getElementById('name').value=data.user.name;
+            document.getElementById('email').value=data.user.email;
+            document.getElementById('address').value=data.user.address;
+            document.getElementById('contact').value=data.user.contact;
+
+        }else{
+            document.getElementById("msg").textContent=data.message;
+        }
+    }
+    document.getElementById("form").addEventListener("submit",async function(e){
+    e.preventDefault();
+    const form=new FormData(this);
+    const response=await fetch("http://localhost/digital-wallet/Backend/api/profile.php",{
+             method: "POST",
+             body: form
+    });
+    const result=await response.json();
+    const messg=document.getElementById("msg");
+    messg.textContent=result.message;
+    messg.style.color=result.success?"green":"red";
+
+  if (result.success) {
+    load();  }
+});
+    load();
+
+    
+
+</script>
+</body>
+</html>

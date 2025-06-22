@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Transaction History</title>
+  <style>
+    h2 {
+      color: black;
+      text-align: center;
+      font-size: 50px;
+      margin-left: 60px;
+    }
+    html, body {
+      height: 100%;
+      font-family: Arial;
+      background: linear-gradient(to bottom right, #f8f8f8, #2e2e2e);
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid #999;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+select, input {
+  margin: 10px auto;   
+  padding: 10px;
+  width: 60%;
+  display: block;      
+  text-align: center;   
+}
+
+.button {
+width: 10%;
+padding: 16px;
+margin: 25px auto 25px auto; 
+border: none;
+border-radius: 4px;
+font-size: 20px;
+color: white;
+background-color: lightslategray;
+cursor: pointer;
+display: block; 
+}
+
+.button:hover {
+  background-color: whitesmoke;
+  color: black;
+}
+
+    .message { text-align: center;
+         margin-bottom: 20px; 
+         font-weight: bold;
+         }
+    label { 
+      
+        padding: 70px;
+        font-weight: bold;
+        font-size: 20px;
+       
+     }
+           .b{
+         display: flex;
+        gap: 20px;        
+         justify-content: center; 
+         margin: 20px 0;
+     }
+     .b button {
+        
+     padding: 12px 30px;
+     font-size: 18px;
+     border: none;
+     border-radius: 6px;
+     cursor: pointer;
+     color: white;
+     transition: background-color 0.3s ease;
+  }
+  .b-history {
+    background-color: #007BFF; 
+  }
+  .b-history:hover {
+    background-color: #0056b3;
+  }
+  .b-profile {
+    background-color: #28a745;
+  }
+  .b-profile:hover {
+    background-color: #1e7e34;
+  }
+  </style>
+</head>
+<body>
+  <h2>Your Transactions</h2>
+
+  <form id="filter">
+    <label for="type">Type:</label>
+    <select id="type" name="type">
+      <option value="">All</option>
+      <option value="deposit">Deposit</option>
+      <option value="withdraw">Withdraw</option>
+    </select>
+    <label for="from">From:</label>
+    <input type="date" id="from" name="from">
+    <label for="to">To:</label>
+    <input type="date" id="to" name="to">
+    <button class="button" type="submit">Filter</button>
+  </form>
+
+  <table id="historyTable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Amount</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="b">
+  <button class="b-history" onclick="location.href='wallet.html'">Back to your wallet</button>
+  <button class="b-profile" onclick="location.href='profile.html'">Go to your profile</button>
+
+</div>
+  <script>
+    async function loadHistory(params = {}) {
+      const url = new URL("http://localhost/digital-wallet/Backend/api/history.php");
+      Object.keys(params).forEach(key => {
+        if (params[key]) url.searchParams.append(key, params[key]);
+      });
+
+      try {
+        const res = await fetch(url, { credentials: 'include' });
+        const data = await res.json();
+
+        const tbody = document.querySelector("#historyTable tbody");
+        tbody.innerHTML = "";
+
+        if (data.success && data.transactions.length > 0) {
+          data.transactions.forEach(t => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${t.transaction_date}</td>
+              <td>${t.type}</td>
+              <td>${parseFloat(t.amount).toFixed(2)}</td>
+              <td>${t.created_at}</td>
+            `;
+            tbody.appendChild(row);
+          });
+        } else {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No transactions found</td></tr>`;
+        }
+      } catch (err) {
+        console.error("Failed to load transactions:", err);
+      }
+    }
+
+    document.getElementById("filter").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const form = new FormData(this);
+      const params = Object.fromEntries(form.entries());
+      loadHistory(params);
+    });
+    loadHistory();
+  </script>
+</body>
+</html>

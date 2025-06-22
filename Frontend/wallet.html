@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wallet</title>
+  <style>
+    h2{
+            color: black;
+            text-align: center;
+            font-size: 50px;
+            margin-left: 60px;
+        }
+   html, body { 
+    height: 100%;
+    font-family: Arial;
+    background: linear-gradient(to bottom right, #f8f8f8, #2e2e2e);
+    background-repeat: no-repeat;
+    background-size: cover;
+        }
+input{ width: 80%;
+    align-items: center;
+     padding: 16px; 
+     margin: 25px;
+     margin-bottom: 25px;
+     border:1px solid black;
+     border-radius: 4px;
+    font-size: 20px; }
+    .button { width: 80%;
+    align-items: center;
+     padding: 16px; 
+     margin: 25px;
+     margin-bottom: 25px;
+     border:1px solid black;
+     border-radius: 4px;
+    font-size: 20px; }
+ .button{
+color: white;
+background-color: lightslategray;
+border: none;
+cursor: pointer;
+     }
+     .button:hover{
+        background-color: whitesmoke;
+        color: black;
+     }
+    .message { text-align: center;
+         margin-bottom: 20px; 
+         font-weight: bold;
+         }
+          form{
+     height: 400px;
+    max-width: 600px;
+    margin-left: 650px;
+ align-items: center;
+     text-align: center;
+     border: 2px solid black;
+     border-radius: 8px;
+     background-color: rgba(255, 255, 255, 0.85); 
+     backdrop-filter: blur(5px); 
+     box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    p{
+      font-size: 30px;
+    }
+      label { 
+        
+        font-weight: bold;
+        font-size: 20px;
+       
+     }
+     .b{
+         display: flex;
+        gap: 20px;        
+         justify-content: center; 
+         margin: 20px 0;
+     }
+     .b button {
+     padding: 12px 10px;
+     font-size: 18px;
+     border: none;
+     border-radius: 6px;
+     cursor: pointer;
+     color: white;
+     transition: background-color 0.3s ease;
+  }
+  .b-history {
+    background-color: #007BFF; 
+  }
+  .b-history:hover {
+    background-color: #0056b3;
+  }
+  .b-profile {
+    background-color: #28a745;
+  }
+  .b-profile:hover {
+    background-color: #1e7e34;
+  }
+  </style>
+</head>
+<body>
+    <h2>Wallet</h2>
+    <div class="message" id="msg"></div>
+    <p><strong>Balance:</strong>$<span id="balance">...</span></p>
+     <p><strong>Daily Limit:</strong>$<span id="limit">...</span></p>
+<form id="wallet">
+    <label>Amount</label>
+    <input type="number" id="amount" step="0.01" required>
+    <button class="button" type="submit" name="action" value="deposit">Deposit</button>
+     <button class="button" type="submit" name="action" value="withdraw">withdraw</button>
+</form>
+<div class="b">
+  <button class="b-history" onclick="location.href='history.html'">View all transactions</button>
+  <button class="b-profile" onclick="location.href='profile.html'">Go to your profile</button>
+</div>
+<script>
+    async function load(){
+const res=await fetch("http://localhost/digital-wallet/Backend/api/wallet.php");
+const data= await res.json();
+if(data.success){
+    document.getElementById("balance").textContent=data.balance.toFixed(2);
+    document.getElementById("limit").textContent=data.daily_limit.toFixed(2);
+}else{
+    document.getElementById("msg").textContent=data.message;
+}
+    }
+    document.getElementById("wallet").addEventListener("submit",async function (e) {
+      e.preventDefault();
+      const formdata=new FormData();
+      formdata.append("amount",document.getElementById("amount").value);
+      formdata.append("action",document.activeElement.value);
+      const res=await fetch("http://localhost/digital-wallet/Backend/api/wallet.php",{
+        method:"POST",
+        body:formdata
+      });
+      const results=await res.json();
+      const msg=document.getElementById("msg");
+      msg.textContent=results.message;
+      msg.style.color=results.success ? "green":"red";
+      if(results.success)load();
+    });
+    load();
+</script>
+</body>
+</html>

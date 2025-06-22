@@ -1,0 +1,87 @@
+<!DOCTYPE html> 
+<html>
+<head>
+    <title>Welcome to the Register Page</title>
+    <style>
+        h2{
+            color: white;
+            text-align: left;
+            font-size: 50px;
+            margin-left: 60px;
+        }
+body{
+    font-family:Arial;
+    background: url('https://wallpaperaccess.com/full/2274602.jpg');
+   background-size: cover;
+
+}
+form{max-width: 600px;
+    margin-left: 50px;
+     height: 700px;
+     text-align: left;
+     border: 2px solid black;
+     border-radius: 8px;
+     background-color: rgba(255, 255, 255, 0.85); 
+     backdrop-filter: blur(5px); 
+     box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+input,button { width: 80%;
+    align-items: center;
+     padding: 16px; 
+     margin: 25px;
+     margin-bottom: 25px;
+     border:1px solid black;
+     border-radius: 4px;
+    font-size: 20px; }
+ button{
+color: white;
+background-color: lightslategray;
+border: none;
+cursor: pointer;
+     }
+     button:hover{
+        background-color: whitesmoke;
+        color: black;
+     }
+.message { text-align: center; 
+    margin-top: 20px;
+font-weight: bold; }
+    </style>
+
+</head>
+
+<body>
+<h2>Registeration</h2>
+<form id="register">
+    <input type="text" name="name" placeholder="Full Name" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="Password" name="password" placeholder="Password" required>
+    <input type="text" name="address" placeholder="Address" required>
+    <input type="text" name="contact" placeholder="Contact Number" required>
+    <button type="submit">Register</button>
+
+</form>
+<div class="message" id="Msg"></div>
+
+
+
+<script>
+document.getElementById("register").addEventListener("submit",async function(e){
+    e.preventDefault();
+    const form=new FormData(this);
+    const response=await fetch("http://localhost/digital-wallet/Backend/api/register.php",{
+             method: "POST",
+             body: form
+    });
+    const result=await response.json();
+    const messg=document.getElementById("Msg");
+    messg.textContent=result.message;
+    messg.style.color=result.success?"green":"red";
+
+});
+
+</script>
+</body>
+
+
+</html>
