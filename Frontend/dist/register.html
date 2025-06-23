@@ -77,7 +77,11 @@ document.getElementById("register").addEventListener("submit",async function(e){
     const messg=document.getElementById("Msg");
     messg.textContent=result.message;
     messg.style.color=result.success?"green":"red";
-
+  if (result.success) {
+ setTimeout(() => {
+ window.location.href = result.redirect;
+}, 1500); 
+  }
 });
 
 </script>
